@@ -2,7 +2,7 @@
 > A statistical analysis of users of a bike share system in Washington DC. This is a group project for UBC STAT 306.
 
 ## <ins>Data Source:</ins>
-The data being used for this project is ![Bike Rental Data](https://www.kaggle.com/datasets/prepinstaprime/bike-rental-data) found on Kaggle.
+The data being used for this project is [Bike Rental Data](https://www.kaggle.com/datasets/prepinstaprime/bike-rental-data) found on Kaggle.
 
 ## <ins>Variables:</ins>
 The dataset used contains information on bicycle rentals associated with bike-sharing systems in Washington, DC. Bike sharing is where customers can rent a bike and return it to different places across a city, often meant to reduce vehicle dependency and extend transit capability in an urban area. The Kaggle dataset doesn’t say where or how the data was obtained, although further research indicates it is likely from the Capital Bikeshare system.
