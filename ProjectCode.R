@@ -1,6 +1,7 @@
 options(digits = 12)
 options(max.print=100000)
 library(tidyverse)
+library(leaps)
 
 # Read data from the file
 data <- read.table("bikes.csv", header=TRUE, sep=",")
@@ -55,24 +56,11 @@ data$weather <- factor(data$weather,
                        levels=c("1","2","3","4"),
                        labels=c("Clear","Mist/Clouds","Light Rain/Snow","Heavy Rain/Snow"))
 
-# create 3 separate data sets - one each for total/casual/registered count
-total_data <- data[,-c(10, 11)]
-total_data <- total_data[, c(10, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
+# create 2 separate data sets - one each for casual/registered count
 casual_data <- data[,-c(11, 12)]
 casual_data <- casual_data[, c(10, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
 registered_data <- data[,-c(10, 12)]
 registered_data <- registered_data[, c(10, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
-
-# plots of individual variables with respect to total bike rider count
-plot(total_data$year, total_data$count, main="Effect of Year on # of Total Users")
-plot(total_data$season, total_data$count, main="Effect of Season on # of Total Users")
-plot(total_data$time, total_data$count, main="Effect of Hour of Day on # of Total Users")
-plot(total_data$holiday, total_data$count, main="Effect of Holiday on # of Total Users")
-plot(total_data$workingday, total_data$count, main="Effect of Weekday on # of Total Users")
-plot(total_data$weather, total_data$count, main="Effect of Weather on # of Total Users")
-plot(total_data$atemp, total_data$count, main="Effect of Apparent Temperature on # of Total Users")
-plot(total_data$humidity, total_data$count, main="Effect of Humidity on # of Total Users")
-plot(total_data$windspeed, total_data$count, main="Effect of Wind Speed on # of Total Users")
 
 # plots of individual variables with respect to casual bike rider count
 plot(casual_data$year, casual_data$casual, main="Effect of Year on # of Casual Users")
@@ -96,16 +84,6 @@ plot(registered_data$atemp, registered_data$registered, main="Effect of Apparent
 plot(registered_data$humidity, registered_data$registered, main="Effect of Humidity on # of Registered Users")
 plot(registered_data$windspeed, registered_data$registered, main="Effect of Wind Speed on # of Registered Users")
 
-# examine best models for the total bike rider count
-s_total <- regsubsets(count~., data=total_data, method="forward", nvmax = 35)
-ss_total <- summary(s_total)
-ss_total$which
-ss_total$adjr2
-ss_total$cp
-plot(s_total, scale = "adjr2")
-plot(s_total, scale = "Cp")
-plot(s_total, scale = "bic")
-
 # examine best models for the casual bike rider count
 s_casual <- regsubsets(casual~., data=casual_data, method="forward", nvmax = 35)
 ss_casual <- summary(s_casual)
@@ -125,3 +103,105 @@ ss_registered$cp
 plot(s_registered, scale = "adjr2")
 plot(s_registered, scale = "Cp")
 plot(s_registered, scale = "bic")
+
+# attempt at fitting a 3 variable model for casual
+reg_casual <- lm(casual~workingday+atemp+humidity, data=casual_data)
+summary(reg_casual)
+plot(reg_casual$fitted.values,
+     reg_casual$residuals, 
+     main="Residuals v. Fitted values", 
+     xlab="Fitted values",
+     ylab="Residuals")
+plot(casual_data$casual,
+     reg_casual$fitted.values,
+     main="Fitted values v. Observed values", 
+     xlab="Casual bike rider count",
+     ylab="Predicted casual bike rider count")
+qqnorm(residuals(reg_casual))
+qqline(residuals(reg_casual), col = "darkgreen", lty=2)
+BIC(reg_casual)
+
+# attempt at fitting a full linear model for casual
+reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data)
+summary(reg1_casual)
+plot(reg1_casual$fitted.values,
+     reg1_casual$residuals, 
+     main="Residuals v. Fitted values", 
+     xlab="Fitted values",
+     ylab="Residuals")
+plot(casual_data$casual,
+     reg1_casual$fitted.values,
+     main="Fitted values v. Observed values", 
+     xlab="Casual bike rider count",
+     ylab="Predicted casual bike rider count")
+qqnorm(residuals(reg1_casual))
+qqline(residuals(reg1_casual), col = "darkgreen", lty=2)
+BIC(reg1_casual)
+
+# perhaps a poisson model is better suited due to the nature of "counting" bike riders
+reg2_casual <- glm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data, family=poisson)
+summary(reg2_casual)
+plot(reg2_casual$fitted.values,
+     reg2_casual$residuals,
+     main="Residuals v. Fitted values", 
+     xlab="Fitted values",
+     ylab="Residuals")
+plot(casual_data$casual,
+     reg2_casual$fitted.values,
+     main="Fitted values v. Observed values",  
+     xlab="Casual bike rider count",
+     ylab="Predicted casual bike rider count")
+qqnorm(residuals(reg2_casual))
+qqline(residuals(reg2_casual), col = "darkgreen", lty=2)
+BIC(reg2_casual)
+
+# attempt at fitting a single variable model for registered
+reg_registered <- lm(registered~time, data=registered_data)
+summary(reg_registered)
+plot(reg_registered$fitted.values,
+     reg_registered$residuals, 
+     main="Residuals v. Fitted values", 
+     xlab="Fitted values",
+     ylab="Residuals")
+plot(registered_data$registered,
+     reg_registered$fitted.values,
+     main="Fitted values v. Observed values",  
+     xlab="Registered bike rider count",
+     ylab="Predicted registered bike rider count")
+qqnorm(residuals(reg_registered))
+qqline(residuals(reg_registered), col = "darkgreen", lty=2)
+BIC(reg_registered)
+
+# attempt at fitting a full linear model for registered
+reg1_registered <- lm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=registered_data)
+summary(reg1_registered)
+plot(reg1_registered$fitted.values,
+     reg1_registered$residuals, 
+     main="Residuals v. Fitted values", 
+     xlab="Fitted values",
+     ylab="Residuals")
+plot(registered_data$registered,
+     reg1_registered$fitted.values,
+     main="Fitted values v. Observed values",  
+     xlab="Registered bike rider count",
+     ylab="Predicted registered bike rider count")
+qqnorm(residuals(reg1_registered))
+qqline(residuals(reg1_registered), col = "darkgreen", lty=2)
+BIC(reg1_registered)
+
+# perhaps a poisson model is better suited due to the nature of "counting" bike riders
+reg2_registered <- glm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=registered_data, family=poisson)
+summary(reg2_registered)
+plot(reg2_registered$fitted.values,
+     reg2_registered$residuals,
+     main="Residuals v. Fitted values", 
+     xlab="Fitted values",
+     ylab="Residuals")
+plot(registered_data$registered,
+     reg2_registered$fitted.values,
+     main="Fitted values v. Observed values",  
+     xlab="Registered bike rider count",
+     ylab="Predicted registered bike rider count")
+qqnorm(residuals(reg2_registered))
+qqline(residuals(reg2_registered), col = "darkgreen", lty=2)
+BIC(reg2_registered)
