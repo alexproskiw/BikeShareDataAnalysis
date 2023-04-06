@@ -188,6 +188,13 @@ plot(registered_data$registered,
 qqnorm(residuals(reg1_registered))
 qqline(residuals(reg1_registered), col = "darkgreen", lty=2)
 BIC(reg1_registered)
+#add/
+s2=regsubsets(registered~.,data=registered_data,method = "forward")
+ss2=summary(s2)
+ss2$which
+#end
+
+
 
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
 reg2_registered <- glm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=registered_data, family=poisson)
