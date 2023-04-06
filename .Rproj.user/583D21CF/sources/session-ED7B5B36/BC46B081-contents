@@ -1,0 +1,79 @@
+dis=3:10
+
+suc=c(1117/1125,996/1077,941/1180,763/1101,659/1069,558/1110,501/1130,433/1110)
+suc=c(1117/(1125+1117),996/(1077+996),941/(1180+941),763/(1101+763),659/(659+1069),558/(558+1110),501/(501+1130),433/(1110+433))
+
+dat=data.frame(dis,suc)
+
+model <- glm( suc ~dis, data = dat)
+summary(model)
+new=data.frame(dis=8)
+predict(model,newdata = new,se.fit = TRUE,)
+?predict
+plot(data=dat,suc~dis )
+
+fun1=lm(data = dat,suc~log(dis))
+predict(fun1,newdata = new,se.fit = TRUE)
+
+
+
+# create the data frame with the given counts
+putts_df <- data.frame(distance = c(2, 3, 4, 5, 6, 7, 8, 9, 10),
+                       attempts = c(1869, 1697, 1477, 1230, 1002, 862, 632, 503, 389),
+                       holed = c(1786, 1496, 1192, 867, 675, 491, 298, 196, 120))
+
+# calculate the success probabilities
+putts_df$prob <- putts_df$holed / putts_df$attempts
+
+# fit the logistic regression model
+model <- glm(prob ~ distance, data = putts_df, family = binomial)
+
+# estimate the probability of holing a putt from six feet
+new_data <- data.frame(distance = 6)
+predicted_prob <- predict(model, new_data, type = "response")
+round(predicted_prob, 2)
+
+# estimate the odds of holing a putt from eight feet
+new_data <- data.frame(distance = 8)
+predicted_prob <- predict(model, new_data, type = "response")
+odds <- predicted_prob / (1 - predicted_prob)
+round(odds, 2)
+
+
+# calculate the residual for a distance of six feet
+new_data <- data.frame(distance = 6)
+predicted_prob <- predict(model, new_data, type = "response")
+actual_prob <- putts_df$prob[putts_df$distance == 6]
+residual <- actual_prob - predicted_prob
+round(residual, 2)
+
+dat2=read.table("hw9.txt",header = TRUE)
+fun2=lm(data=dat2,K6~FA)
+summary(fun2)
+
+fun3=lm(data=dat2,FA~K6)
+summary(fun3)
+num_spd <- sum(as.logical(dat2$spd_status))
+
+sum(dat2$K6>=13)
+
+fun2d=lm(data=dat2,log(FA)~K6)
+summary(fun2d)
+fun2d2=lm(data=dat2,K6~log(FA))
+newdata2d = data.frame(FA=0.03)
+newdat=predict(fun2d2,newdata = newdata2d)
+1 - pnorm(12, mean = newdat, sd = summary(fun2d2)$sigma)
+log_odds <- coef(fun2)[1] + coef(model)[2] * 0.03
+odds <- exp(log_odds)
+prob <- odds / (1 + odds)
+
+
+
+
+l=6.85331 - 0.12153 * 0.05
+log(odds of SPD) = 6.85331 - 0.12153 * 0.05 = 6.79108
+odds of SPD = exp(l)) = exp(6.79108) = 891.701
+
+
+
+

@@ -1,0 +1,21 @@
+dat1=read.table("bikeshare_NQKRI1JE8C09.txt",header = TRUE)
+dat1$wkd=as.character(dat1$wkd)
+dat1$num=as.numeric(dat1$num)
+dat1$tmp=as.numeric(dat1$tmp)
+plot(data=dat1,num~tmp)
+?hist
+fun2=glm(data=dat1,num~tmp+wkd,family = "poisson")
+fun1=glm(data=dat1,num~tmp,family = "poisson")
+new1=data.frame(tmp=20)
+new12=data.frame(tmp=11)
+predict(fun1,newdata = new1, family = "poisson")
+predict(fun1,newdata = new12, family = "poisson")
+summary(fun1)
+new2=data.frame(tmp=22,wkd=1)
+predictions=predict(fun2,newdata = new2, family = "poisson")
+fun3=glm(data=dat1,num~tmp+wkd+tmp*wkd,family =  "poisson")
+summary(fun3)
+dpois(15, lambda = predictions)
+
+
+

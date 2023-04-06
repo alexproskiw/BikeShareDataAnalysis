@@ -1,0 +1,44 @@
+setwd("C:/Users/Gao00/Desktop/Timothy GAO/UBC/courses/W2022W2/stat 306/lab/lab8")
+D=read.csv("restaurant_income.txt",header = TRUE)
+s=regsubsets(Income~.,data=D,method = "exhaustive")
+ss=summary(s)
+ss$which
+
+help("regsubsets")
+
+ss$adjr2
+ss$cp
+ss$rsq
+
+fun1=lm(data=D,Income~Size+Access+Marketing+Staff)
+AIC(fun1)
+summary(fun1)
+cor(D$Income,D$Staff)
+
+
+
+s2=regsubsets(Income~.,data=D,method = "forward")
+ss2=summary(s2)
+ss2$which
+
+train = 1:as.integer(dim(D)[1]/2)
+reg1 = lm(Income~Access + Price+Waste,data=D[train,])
+error1=sum((D$Income[-train]-predict(reg1,D[-train,]))^2)
+reg2=lm(Income~Access+Price+Waste,data=D[train,])
+error2=sum((D$Income[train]-predict(reg2,D[train,]))^2)
+error=(error1+error2)/dim(D)[1]
+
+
+train = 1:as.integer(dim(D)[1]/2)
+reg12 = lm(Income~Access + Price+Waste+Hours,data=D[train,])
+error12=sum((D$Income[-train]-predict(reg1,D[-train,]))^2)
+reg22=lm(Income~Access+Price+Waste+Hours,data=D[train,])
+error22=sum((D$Income[train]-predict(reg2,D[train,]))^2)
+error222=(error1+error2)/dim(D)[1]
+
+
+
+
+
+
+
