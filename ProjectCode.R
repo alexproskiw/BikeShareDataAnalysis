@@ -121,6 +121,13 @@ qqnorm(residuals(reg_casual))
 qqline(residuals(reg_casual), col = "darkgreen", lty=2)
 BIC(reg_casual)
 
+train_reg_casual = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual = casual_data[-as.numeric(rownames(train_reg_casual)), ]
+reg_casual = lm(casual~workingday+atemp+humidity,data=train_reg_casual)
+error_casual=sum((train_reg_casual$casual-predict(reg_casual1,test_reg_casual))^2)
+print(error_casual)
+
+
 # attempt at fitting a full linear model for casual
 reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data)
 summary(reg1_casual)
@@ -188,12 +195,6 @@ plot(registered_data$registered,
 qqnorm(residuals(reg1_registered))
 qqline(residuals(reg1_registered), col = "darkgreen", lty=2)
 BIC(reg1_registered)
-#add/
-s2=regsubsets(registered~.,data=registered_data,method = "forward")
-ss2=summary(s2)
-ss2$which
-#end
-
 
 
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
@@ -212,3 +213,6 @@ plot(registered_data$registered,
 qqnorm(residuals(reg2_registered))
 qqline(residuals(reg2_registered), col = "darkgreen", lty=2)
 BIC(reg2_registered)
+
+
+
