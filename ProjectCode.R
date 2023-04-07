@@ -121,6 +121,12 @@ qqnorm(residuals(reg_casual))
 qqline(residuals(reg_casual), col = "darkgreen", lty=2)
 BIC(reg_casual)
 
+train_reg_casual = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual = casual_data[-as.numeric(rownames(train_reg_casual)), ]
+reg_casual = lm(casual~workingday+atemp+humidity,data=train_reg_casual)
+error_casual=sum((train_reg_casual$casual-predict(reg_casual1,test_reg_casual))^2)
+print(error_casual)
+
 # attempt at fitting a full linear model for casual
 reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data)
 summary(reg1_casual)
@@ -138,6 +144,12 @@ qqnorm(residuals(reg1_casual))
 qqline(residuals(reg1_casual), col = "darkgreen", lty=2)
 BIC(reg1_casual)
 
+train_reg_casual_full = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual_full = casual_data[-as.numeric(rownames(train_reg_casual_full)), ]
+reg_casual_full = lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed,data=train_reg_casual)
+error_casual_full=sum((train_reg_casual_full$casual-predict(reg_casual_full,test_reg_casual_full))^2)
+print(error_casual_full)
+
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
 reg2_casual <- glm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data, family=poisson)
 summary(reg2_casual)
@@ -154,6 +166,12 @@ plot(casual_data$casual,
 qqnorm(residuals(reg2_casual))
 qqline(residuals(reg2_casual), col = "darkgreen", lty=2)
 BIC(reg2_casual)
+
+train_reg_casual = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual = casual_data[-as.numeric(rownames(train_reg_casual)), ]
+reg_casual_poisson =glm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=train_reg_casual, family=poisson)
+error_casual_poisson=sum((train_reg_casual$casual-predict(reg_casual1,test_reg_casual))^2)
+print(error_casual_poisson)
 
 # attempt at fitting a single variable model for registered
 reg_registered <- lm(registered~time, data=registered_data)
