@@ -62,27 +62,31 @@ casual_data <- casual_data[, c(10, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
 registered_data <- data[,-c(10, 12)]
 registered_data <- registered_data[, c(10, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
 
+# create one separate data set - containing all casual, registered, users; sum of two counts
+users <- data$casual + data$registered
+all_users_data <- cbind(data, users)
+
 # plots of individual variables with respect to casual bike rider count
-plot(casual_data$year, casual_data$casual, main="Effect of Year on # of Casual Users")
-plot(casual_data$season, casual_data$casual, main="Effect of Season on # of Casual Users")
-plot(casual_data$time, casual_data$casual, main="Effect of Hour of Day on # of Casual Users")
-plot(casual_data$holiday, casual_data$casual, main="Effect of Holiday on # of Casual Users")
-plot(casual_data$workingday, casual_data$casual, main="Effect of Weekday on # of Casual Users")
-plot(casual_data$weather, casual_data$casual, main="Effect of Weather on # of Casual Users")
-plot(casual_data$atemp, casual_data$casual, main="Effect of Apparent Temperature on # of Casual Users")
-plot(casual_data$humidity, casual_data$casual, main="Effect of Humidity on # of Casual Users")
-plot(casual_data$windspeed, casual_data$casual, main="Effect of Wind Speed on # of Casual Users")
+plot(casual_data$year, casual_data$casual, xlab = "Year", ylab = "The number of non-registered users", main="Effect of Year on # of Casual Users")
+plot(casual_data$season, casual_data$casual, xlab = "Season", ylab = "The number of non-registered users", main="Effect of Season on # of Casual Users")
+plot(casual_data$time, casual_data$casual, xlab = "1-hour segments within a day", ylab = "The number of non-registered users", main="Effect of Hour of Day on # of Casual Users")
+plot(casual_data$holiday, casual_data$casual, xlab = "Holiday", ylab = "The number of non-registered users", main="Effect of Holiday on # of Casual Users")
+plot(casual_data$workingday, casual_data$casual, xlab = "Working day", ylab = "The number of non-registered users", main="Effect of Weekday on # of Casual Users")
+plot(casual_data$weather, casual_data$casual, xlab = "Weather", ylab = "The number of non-registered users", main="Effect of Weather on # of Casual Users")
+plot(casual_data$atemp, casual_data$casual, xlab = "Normalized feeling temperature (°C)", ylab = "The number of on-registered users", main="Effect of Apparent Temperature on # of Casual Users")
+plot(casual_data$humidity, casual_data$casual, xlab = "Normalized humidity by 100", ylab = "The number of non-registered users", main="Effect of Humidity on # of Casual Users")
+plot(casual_data$windspeed, casual_data$casual, xlab = "Normalized wind speed by 67 (miles per hour)", ylab = "The number of non-registered users", main="Effect of Wind Speed on # of Casual Users")
 
 # plots of individual variables with respect to registered bike rider count
-plot(data$year, data$registered, main="Effect of Year on # of Registered Users")
-plot(registered_data$season, registered_data$registered, main="Effect of Season on # of Registered Users")
-plot(registered_data$time, registered_data$registered, main="Effect of Hour of Day on # of Registered Users")
-plot(registered_data$holiday, registered_data$registered, main="Effect of Holiday on # of Registered Users")
-plot(registered_data$workingday, registered_data$registered, main="Effect of Weekday on # of Registered Users")
-plot(registered_data$weather, registered_data$registered, main="Effect of Weather on # of Registered Users")
-plot(registered_data$atemp, registered_data$registered, main="Effect of Apparent Temperature on # of Registered Users")
-plot(registered_data$humidity, registered_data$registered, main="Effect of Humidity on # of Registered Users")
-plot(registered_data$windspeed, registered_data$registered, main="Effect of Wind Speed on # of Registered Users")
+plot(data$year, data$registered,  xlab = "Year", ylab = "The number of registered user", main="Effect of Year on # of Registered Users")
+plot(registered_data$season, registered_data$registered, xlab = "Season", ylab = "The number of registered user", main="Effect of Season on # of Registered Users")
+plot(registered_data$time, registered_data$registered, xlab = "1-hour segments within a day", ylab = "The number of registered user", main="Effect of Hour of Day on # of Registered Users")
+plot(registered_data$holiday, registered_data$registered, xlab = "Holiday", ylab = "The number of registered user", main="Effect of Holiday on # of Registered Users")
+plot(registered_data$workingday, registered_data$registered, xlab = "Working day", ylab = "The number of registered user", main="Effect of Weekday on # of Registered Users")
+plot(registered_data$weather, registered_data$registered, xlab = "Weather", ylab = "The number of registered user", main="Effect of Weather on # of Registered Users")
+plot(registered_data$atemp, registered_data$registered, xlab = "Normalized feeling temperature (°C)", ylab = "The number of registered user", main="Effect of Apparent Temperature on # of Registered Users")
+plot(registered_data$humidity,registered_data$registered, xlab = "Normalized humidity by 100", ylab = "The number of registered user", main="Effect of Humidity on # of Registered Users")
+plot(registered_data$windspeed, registered_data$registered, xlab = "Normalized wind speed by 67 (miles per hour)", ylab = "The number of registered user", main="Effect of Wind Speed on # of Registered Users")
 
 # examine best models for the casual bike rider count
 s_casual <- regsubsets(casual~., data=casual_data, method="forward", nvmax = 35)
@@ -121,14 +125,7 @@ qqnorm(residuals(reg_casual))
 qqline(residuals(reg_casual), col = "darkgreen", lty=2)
 BIC(reg_casual)
 
-train_reg_casual = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
-test_reg_casual = casual_data[-as.numeric(rownames(train_reg_casual)), ]
-reg_casual = lm(casual~workingday+atemp+humidity,data=train_reg_casual)
-error_casual=sum((train_reg_casual$casual-predict(reg_casual1,test_reg_casual))^2)
-print(error_casual)
-
-
-# attempt at fitting a full linear model for casual
+# attempt at fitting a full linear model for casual 
 reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data)
 summary(reg1_casual)
 plot(reg1_casual$fitted.values,
@@ -195,6 +192,12 @@ plot(registered_data$registered,
 qqnorm(residuals(reg1_registered))
 qqline(residuals(reg1_registered), col = "darkgreen", lty=2)
 BIC(reg1_registered)
+#add/
+s2=regsubsets(registered~.,data=registered_data,method = "forward")
+ss2=summary(s2)
+ss2$which
+#end
+
 
 
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
@@ -213,6 +216,4 @@ plot(registered_data$registered,
 qqnorm(residuals(reg2_registered))
 qqline(residuals(reg2_registered), col = "darkgreen", lty=2)
 BIC(reg2_registered)
-
-
 
