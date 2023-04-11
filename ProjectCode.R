@@ -67,30 +67,27 @@ users <- data$casual + data$registered
 all_users_data <- cbind(data, users)
 
 # plots of individual variables with respect to casual bike rider count
-plot(casual_data$year, casual_data$casual, main="Effect of Year on # of Casual Users")
-plot(casual_data$season, casual_data$casual, main="Effect of Season on # of Casual Users")
-plot(casual_data$time, casual_data$casual, main="Effect of Hour of Day on # of Casual Users")
-plot(casual_data$holiday, casual_data$casual, main="Effect of Holiday on # of Casual Users")
-plot(casual_data$workingday, casual_data$casual, main="Effect of Weekday on # of Casual Users")
-plot(casual_data$weather, casual_data$casual, main="Effect of Weather on # of Casual Users")
-plot(casual_data$atemp, casual_data$casual, main="Effect of Apparent Temperature on # of Casual Users")
-plot(casual_data$humidity, casual_data$casual, main="Effect of Humidity on # of Casual Users")
-plot(casual_data$windspeed, casual_data$casual, main="Effect of Wind Speed on # of Casual Users")
+plot(casual_data$year, casual_data$casual, xlab = "Year", ylab = "The number of non-registered users", main="Effect of Year on # of Casual Users")
+plot(casual_data$season, casual_data$casual, xlab = "Season", ylab = "The number of non-registered users", main="Effect of Season on # of Casual Users")
+plot(casual_data$time, casual_data$casual, xlab = "1-hour segments within a day", ylab = "The number of non-registered users", main="Effect of Hour of Day on # of Casual Users")
+plot(casual_data$holiday, casual_data$casual, xlab = "Holiday", ylab = "The number of non-registered users", main="Effect of Holiday on # of Casual Users")
+plot(casual_data$workingday, casual_data$casual, xlab = "Working day", ylab = "The number of non-registered users", main="Effect of Weekday on # of Casual Users")
+plot(casual_data$weather, casual_data$casual, xlab = "Weather", ylab = "The number of non-registered users", main="Effect of Weather on # of Casual Users")
+plot(casual_data$atemp, casual_data$casual, xlab = "Normalized feeling temperature (°C)", ylab = "The number of on-registered users", main="Effect of Apparent Temperature on # of Casual Users")
+plot(casual_data$humidity, casual_data$casual, xlab = "Normalized humidity by 100", ylab = "The number of non-registered users", main="Effect of Humidity on # of Casual Users")
+plot(casual_data$windspeed, casual_data$casual, xlab = "Normalized wind speed by 67 (miles per hour)", ylab = "The number of non-registered users", main="Effect of Wind Speed on # of Casual Users")
 
 # plots of individual variables with respect to registered bike rider count
-plot(data$year, data$registered, main="Effect of Year on # of Registered Users")
-plot(registered_data$season, registered_data$registered, main="Effect of Season on # of Registered Users")
-plot(registered_data$time, registered_data$registered, main="Effect of Hour of Day on # of Registered Users")
-plot(registered_data$holiday, registered_data$registered, main="Effect of Holiday on # of Registered Users")
-plot(registered_data$workingday, registered_data$registered, main="Effect of Weekday on # of Registered Users")
-plot(registered_data$weather, registered_data$registered, main="Effect of Weather on # of Registered Users")
-plot(registered_data$atemp, registered_data$registered, main="Effect of Apparent Temperature on # of Registered Users")
-plot(registered_data$humidity, registered_data$registered, main="Effect of Humidity on # of Registered Users")
-plot(registered_data$windspeed, registered_data$registered, main="Effect of Wind Speed on # of Registered Users")
+plot(data$year, data$registered,  xlab = "Year", ylab = "The number of registered user", main="Effect of Year on # of Registered Users")
+plot(registered_data$season, registered_data$registered, xlab = "Season", ylab = "The number of registered user", main="Effect of Season on # of Registered Users")
+plot(registered_data$time, registered_data$registered, xlab = "1-hour segments within a day", ylab = "The number of registered user", main="Effect of Hour of Day on # of Registered Users")
+plot(registered_data$holiday, registered_data$registered, xlab = "Holiday", ylab = "The number of registered user", main="Effect of Holiday on # of Registered Users")
+plot(registered_data$workingday, registered_data$registered, xlab = "Working day", ylab = "The number of registered user", main="Effect of Weekday on # of Registered Users")
+plot(registered_data$weather, registered_data$registered, xlab = "Weather", ylab = "The number of registered user", main="Effect of Weather on # of Registered Users")
+plot(registered_data$atemp, registered_data$registered, xlab = "Normalized feeling temperature (°C)", ylab = "The number of registered user", main="Effect of Apparent Temperature on # of Registered Users")
+plot(registered_data$humidity,registered_data$registered, xlab = "Normalized humidity by 100", ylab = "The number of registered user", main="Effect of Humidity on # of Registered Users")
+plot(registered_data$windspeed, registered_data$registered, xlab = "Normalized wind speed by 67 (miles per hour)", ylab = "The number of registered user", main="Effect of Wind Speed on # of Registered Users")
 
-# interpretation: registered individuals tend to rent a bike regardless of 
-# holiday, weekday/weekend, season, weather(prefer heavy rain/snow day) than casual
-# and prefer morning time (less variation on time)
 
 # examine best models for the casual bike rider count
 s_casual <- regsubsets(casual~., data=casual_data, method="forward", nvmax = 35)
@@ -129,7 +126,7 @@ qqnorm(residuals(reg_casual))
 qqline(residuals(reg_casual), col = "darkgreen", lty=2)
 BIC(reg_casual)
 
-# attempt at fitting a full linear model for casual
+# attempt at fitting a full linear model for casual 
 reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data)
 summary(reg1_casual)
 plot(reg1_casual$fitted.values,
@@ -220,3 +217,4 @@ plot(registered_data$registered,
 qqnorm(residuals(reg2_registered))
 qqline(residuals(reg2_registered), col = "darkgreen", lty=2)
 BIC(reg2_registered)
+
