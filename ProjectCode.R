@@ -113,12 +113,12 @@ reg_casual <- lm(casual~workingday+atemp+humidity, data=casual_data)
 summary(reg_casual)
 plot(reg_casual$fitted.values,
      reg_casual$residuals, 
-     main="Residuals v. Fitted values", 
+     main="Casual Simple - Residuals v. Fitted values", 
      xlab="Fitted values",
      ylab="Residuals")
 plot(casual_data$casual,
      reg_casual$fitted.values,
-     main="Fitted values v. Observed values", 
+     main="Casual Simple - Fitted values v. Observed values", 
      xlab="Casual bike rider count",
      ylab="Predicted casual bike rider count")
 qqnorm(residuals(reg_casual))
@@ -130,12 +130,12 @@ reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humid
 summary(reg1_casual)
 plot(reg1_casual$fitted.values,
      reg1_casual$residuals, 
-     main="Residuals v. Fitted values", 
+     main="Casual Full - Residuals v. Fitted values", 
      xlab="Fitted values",
      ylab="Residuals")
 plot(casual_data$casual,
      reg1_casual$fitted.values,
-     main="Fitted values v. Observed values", 
+     main="Casual Full - Fitted values v. Observed values", 
      xlab="Casual bike rider count",
      ylab="Predicted casual bike rider count")
 qqnorm(residuals(reg1_casual))
@@ -147,12 +147,12 @@ reg2_casual <- glm(casual~year+season+time+holiday+workingday+weather+atemp+humi
 summary(reg2_casual)
 plot(reg2_casual$fitted.values,
      reg2_casual$residuals,
-     main="Residuals v. Fitted values", 
+     main="Casual Poisson - Residuals v. Fitted values", 
      xlab="Fitted values",
      ylab="Residuals")
 plot(casual_data$casual,
      reg2_casual$fitted.values,
-     main="Fitted values v. Observed values",  
+     main="Casual Poisson - Fitted values v. Observed values",  
      xlab="Casual bike rider count",
      ylab="Predicted casual bike rider count")
 qqnorm(residuals(reg2_casual))
@@ -164,12 +164,12 @@ reg_registered <- lm(registered~time, data=registered_data)
 summary(reg_registered)
 plot(reg_registered$fitted.values,
      reg_registered$residuals, 
-     main="Residuals v. Fitted values", 
+     main="Registered Simple - Residuals v. Fitted values", 
      xlab="Fitted values",
      ylab="Residuals")
 plot(registered_data$registered,
      reg_registered$fitted.values,
-     main="Fitted values v. Observed values",  
+     main="Registered Simple - Fitted values v. Observed values",  
      xlab="Registered bike rider count",
      ylab="Predicted registered bike rider count")
 qqnorm(residuals(reg_registered))
@@ -181,36 +181,29 @@ reg1_registered <- lm(registered~year+season+time+holiday+workingday+weather+ate
 summary(reg1_registered)
 plot(reg1_registered$fitted.values,
      reg1_registered$residuals, 
-     main="Residuals v. Fitted values", 
+     main="Registered Full - Residuals v. Fitted values", 
      xlab="Fitted values",
      ylab="Residuals")
 plot(registered_data$registered,
      reg1_registered$fitted.values,
-     main="Fitted values v. Observed values",  
+     main="Registered Full - Fitted values v. Observed values",  
      xlab="Registered bike rider count",
      ylab="Predicted registered bike rider count")
 qqnorm(residuals(reg1_registered))
 qqline(residuals(reg1_registered), col = "darkgreen", lty=2)
 BIC(reg1_registered)
-#add/
-s2=regsubsets(registered~.,data=registered_data,method = "forward")
-ss2=summary(s2)
-ss2$which
-#end
-
-
 
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
 reg2_registered <- glm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=registered_data, family=poisson)
 summary(reg2_registered)
 plot(reg2_registered$fitted.values,
      reg2_registered$residuals,
-     main="Residuals v. Fitted values", 
+     main="Registered Poisson - Residuals v. Fitted values", 
      xlab="Fitted values",
      ylab="Residuals")
 plot(registered_data$registered,
      reg2_registered$fitted.values,
-     main="Fitted values v. Observed values",  
+     main="Registered Poisson - Fitted values v. Observed values",  
      xlab="Registered bike rider count",
      ylab="Predicted registered bike rider count")
 qqnorm(residuals(reg2_registered))
