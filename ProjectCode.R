@@ -3,6 +3,10 @@ options(max.print=100000)
 library(tidyverse)
 library(leaps)
 
+# ---------------------------------------------------------
+# Reading and cleaning data
+# ---------------------------------------------------------
+
 # Read data from the file
 data <- read.table("bikes.csv", header=TRUE, sep=",")
 
@@ -41,8 +45,8 @@ data$time <- factor(data$time,
 
 # Set all other categorical variables as factors
 data$year <- factor(data$year,
-                      levels=c(2011, 2012),
-                      labels=c("2011","2012"))
+                    levels=c(2011, 2012),
+                    labels=c("2011","2012"))
 data$season <- factor(data$season,
                       levels=c("1","2","3","4"),
                       labels=c("January to March","April to June","July to September","October to December"))
@@ -66,6 +70,10 @@ registered_data <- registered_data[, c(10, 1, 2, 3, 4, 5, 6, 7, 8, 9)]
 users <- data$casual + data$registered
 all_users_data <- cbind(data, users)
 
+# ---------------------------------------------------------
+# Visualizations
+# ---------------------------------------------------------
+
 # plots of individual variables with respect to casual bike rider count
 plot(casual_data$year, casual_data$casual, xlab = "Year", ylab = "The number of non-registered users", main="Effect of Year on # of Casual Users")
 plot(casual_data$season, casual_data$casual, xlab = "Season", ylab = "The number of non-registered users", main="Effect of Season on # of Casual Users")
@@ -88,6 +96,10 @@ plot(registered_data$atemp, registered_data$registered, xlab = "Normalized feeli
 plot(registered_data$humidity,registered_data$registered, xlab = "Normalized humidity by 100", ylab = "The number of registered user", main="Effect of Humidity on # of Registered Users")
 plot(registered_data$windspeed, registered_data$registered, xlab = "Normalized wind speed by 67 (miles per hour)", ylab = "The number of registered user", main="Effect of Wind Speed on # of Registered Users")
 
+# ---------------------------------------------------------
+# Exploring models with regsubsets
+# ---------------------------------------------------------
+
 # examine best models for the casual bike rider count
 s_casual <- regsubsets(casual~., data=casual_data, method="forward", nvmax = 35)
 ss_casual <- summary(s_casual)
@@ -107,6 +119,10 @@ ss_registered$cp
 plot(s_registered, scale = "adjr2")
 plot(s_registered, scale = "Cp")
 plot(s_registered, scale = "bic")
+
+# ---------------------------------------------------------
+# Casual User Modelling
+# ---------------------------------------------------------
 
 # attempt at fitting a 3 variable model for casual
 reg_casual <- lm(casual~workingday+atemp+humidity, data=casual_data)
@@ -159,6 +175,10 @@ qqnorm(residuals(reg2_casual))
 qqline(residuals(reg2_casual), col = "darkgreen", lty=2)
 BIC(reg2_casual)
 
+# ---------------------------------------------------------
+# Registered User Modelling
+# ---------------------------------------------------------
+
 # attempt at fitting a single variable model for registered
 reg_registered <- lm(registered~time, data=registered_data)
 summary(reg_registered)
@@ -209,4 +229,3 @@ plot(registered_data$registered,
 qqnorm(residuals(reg2_registered))
 qqline(residuals(reg2_registered), col = "darkgreen", lty=2)
 BIC(reg2_registered)
-
