@@ -2,6 +2,7 @@ options(digits = 12)
 options(max.print=100000)
 library(tidyverse)
 library(leaps)
+set.seed(2023)
 
 # ---------------------------------------------------------
 # Reading and cleaning data
@@ -140,6 +141,12 @@ plot(casual_data$casual,
 qqnorm(residuals(reg_casual))
 qqline(residuals(reg_casual), col = "darkgreen", lty=2)
 BIC(reg_casual)
+# determine error
+train_reg_casual = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual = casual_data[-as.numeric(rownames(train_reg_casual)), ]
+reg_casual = lm(casual~workingday+atemp+humidity,data=train_reg_casual)
+error_casual_3variable=sum((train_reg_casual$casual-predict(reg_casual,test_reg_casual))^2)
+print(error_casual_3variable)
 
 # attempt at fitting a full linear model for casual 
 reg1_casual <- lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data)
@@ -157,6 +164,12 @@ plot(casual_data$casual,
 qqnorm(residuals(reg1_casual))
 qqline(residuals(reg1_casual), col = "darkgreen", lty=2)
 BIC(reg1_casual)
+# determine error
+train_reg_casual_full = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual_full = casual_data[-as.numeric(rownames(train_reg_casual_full)), ]
+reg_casual_full = lm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed,data=train_reg_casual)
+error_casual_full=sum((train_reg_casual_full$casual-predict(reg_casual_full,test_reg_casual_full))^2)
+print(error_casual_full)
 
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
 reg2_casual <- glm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=casual_data, family=poisson)
@@ -174,6 +187,12 @@ plot(casual_data$casual,
 qqnorm(residuals(reg2_casual))
 qqline(residuals(reg2_casual), col = "darkgreen", lty=2)
 BIC(reg2_casual)
+# determine error
+train_reg_casual = casual_data[sample(nrow(casual_data),size = nrow(casual_data)/2),]
+test_reg_casual = casual_data[-as.numeric(rownames(train_reg_casual)), ]
+reg_casual_poisson =glm(casual~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=train_reg_casual, family=poisson)
+error_casual_poisson=sum((train_reg_casual$casual-predict(reg_casual_poisson,test_reg_casual))^2)
+print(error_casual_poisson)
 
 # ---------------------------------------------------------
 # Registered User Modelling
@@ -195,6 +214,13 @@ plot(registered_data$registered,
 qqnorm(residuals(reg_registered))
 qqline(residuals(reg_registered), col = "darkgreen", lty=2)
 BIC(reg_registered)
+# determine error
+train_reg_registered = registered_data[sample(nrow(registered_data),size = nrow(registered_data)/2),]
+test_reg_registered = registered_data[-as.numeric(rownames(train_reg_registered)), ]
+test_reg_registered <- subset(test_reg_registered, weather!="Heavy Rain/Snow")
+reg_registered_single =lm(registered~time, data=train_reg_registered)
+error_registered_single=sum((train_reg_registered$registered-predict(reg_registered_single,test_reg_registered))^2)
+print(error_registered_single)
 
 # attempt at fitting a full linear model for registered
 reg1_registered <- lm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=registered_data)
@@ -212,6 +238,13 @@ plot(registered_data$registered,
 qqnorm(residuals(reg1_registered))
 qqline(residuals(reg1_registered), col = "darkgreen", lty=2)
 BIC(reg1_registered)
+# determine error
+train_reg_registered = registered_data[sample(nrow(registered_data),size = nrow(registered_data)/2),]
+test_reg_registered = registered_data[-as.numeric(rownames(train_reg_registered)), ]
+test_reg_registered <- subset(test_reg_registered, weather!="Heavy Rain/Snow")
+reg_registered_full =lm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=train_reg_registered)
+error_registered_full=sum((train_reg_registered$registered-predict(reg_registered_full,test_reg_registered))^2)
+print(error_registered_full)
 
 # perhaps a poisson model is better suited due to the nature of "counting" bike riders
 reg2_registered <- glm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=registered_data, family=poisson)
@@ -229,3 +262,10 @@ plot(registered_data$registered,
 qqnorm(residuals(reg2_registered))
 qqline(residuals(reg2_registered), col = "darkgreen", lty=2)
 BIC(reg2_registered)
+# determine error
+train_reg_registered = registered_data[sample(nrow(registered_data),size = nrow(registered_data)/2),]
+test_reg_registered = registered_data[-as.numeric(rownames(train_reg_registered)), ]
+test_reg_registered <- subset(test_reg_registered, weather!="Heavy Rain/Snow")
+reg_registered_poisson =glm(registered~year+season+time+holiday+workingday+weather+atemp+humidity+windspeed, data=train_reg_registered, family=poisson)
+error_registered_poisson=sum((train_reg_registered$registered-predict(reg_registered_poisson,test_reg_registered))^2)
+print(error_registered_poisson)
